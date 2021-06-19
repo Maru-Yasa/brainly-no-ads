@@ -1,42 +1,62 @@
 const express = require('express')
 const app     = express()
 const brainly = require('brainly-scraper-v2')
+const { query } = require('express')
 app.set('view engine','ejs')
 app.use(express.urlencoded({ extended: true }))
 
 app.route('/')
-    .get((req,res) => {
-        console.log(req.body)
-        data = null
-        res.render('index',data)
-    })
-    .post((req,res) => {
-        console.log(req.body)
-        res.redirect(`/tanya?question=${req.body.question}`)
-    })
-
-app.route('/tanya')
     .get(async (req,res) => {
         try {
-
-            if (req.query.question) {
-                question = req.query.question
-                await brainly(question, 10, 'id').then(r => {
+            var query = req.query
+            if(!query.question){
+                data = null
+                return res.status(404).send({
+                    error:{
+                        error_massage : "query of null"
+                    },
+                    status:404
+                })
+            }else if(query.question){
+                question = query.question
+                await brainly(question,10,'id').then(r => {
                     data = r.data
-                    res.render('index',data=data)
-                });        
-            } else {
-                res.redirect('/')
+                    res.status(200).send({
+                        status : 200,
+                        data : r.data
+                    })
+                })
             }
-    
+
         } catch (error) {
-            res.redirect('/')
+            res.status(404).send({
+                error:error
+            })
         }
     })
-    .post((req,res) => {
-        console.log(req.body)
-        res.redirect(`/tanya?question=${req.body.question}`)
-    })
+
+// app.route('/tanya')
+//     .get(async (req,res) => {
+//         try {
+
+//             if (req.query.question) {
+//                 question = req.query.question
+//                 await brainly(question, 10, 'id').then(r => {
+//                     data = r.data
+//                     res.render('index',data=data)
+//                 });        
+//             } else {
+//                 res.redirect('/')
+//             }
+    
+//         } catch (error) {
+//             res.redirect('/')
+//         }
+//     })
+//     .post((req,res) => {
+//         console.log(req.body)
+//         res.redirect(`/tanya?question=${req.body.question}`)
+//     })
 
 
 app.listen(3000, () => {
