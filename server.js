@@ -2,9 +2,8 @@ const express = require('express')
 const app     = express()
 const brainly = require('brainly-scraper-v2')
 const { query } = require('express')
-app.set('view engine','ejs')
 app.use(express.urlencoded({ extended: true }))
-
+require('dotenv').config()
 app.route('/')
     .get(async (req,res) => {
         try {
@@ -59,6 +58,6 @@ app.route('/')
 //     })
 
 
-app.listen(3000, () => {
+app.listen(3000|process.env.PORT, () => {
     console.log('Server ok!')
 })
