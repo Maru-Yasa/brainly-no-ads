@@ -38,6 +38,32 @@ app.route('/tanya')
         res.redirect(`/tanya?question=${req.body.question}`)
     })
 
+app.route('/api')
+    .get(async (req,res) => {
+        try {
+            var query = req.query
+            if(query.question){
+                question = query.question
+                server = query.server
+                await brainly(question, 15, server | 'id').then(r => {
+                    data = r.data
+                    res.status(200).send({
+                        length: data.length,
+                        data : data
+                    })
+                })
+            }else{
+                res.status(200).send({
+                    length:data.length,
+                    data:[]
+                })
+            }
+        } catch (error) {
+            res.status(404).send({
+                error:error
+            })
+        }
+    })
 
 app.listen(3000, () => {
     console.log('Server ok!')
