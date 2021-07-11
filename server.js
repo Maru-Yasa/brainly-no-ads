@@ -88,7 +88,7 @@ app.route('/api/wikipedia')
                     tmp = {
                         title:e.title,
                         pageId:e.pageid,
-                        desc : desc
+                        desc : desc ? desc:""
                     }
                     data.push(tmp)
                 }
