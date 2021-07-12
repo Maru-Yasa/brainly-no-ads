@@ -117,13 +117,19 @@ app.route('/api/wikipedia/page')
                 let page = await wiki.page(id)
                 let _summary = await page.summary()
                 let summary = _summary.extract
-                let data = {
-                    title:_summary.title,
-                    summary:summary,
-                    thumbnail:_summary.thumbnail.source,
-                    lang:_summary.lang,
-                    description : _summary.description,
-                    intro:await page.intro(),
+                let intro = await page.intro()
+                let data = undefined
+                try {
+                    data = {
+                        title:_summary.title ? _summary.title : "",
+                        extract:summary ? summary : "",
+                        thumbnail:_summary.thumbnail.source ? _summary.thumbnail.source : "",
+                        lang:_summary.lang ? _summary.lang : "",
+                        description : _summary.description ? _summary.description : "",
+                        intro:intro ? intro : "",
+                    }
+                } catch (error) {
+                    data = _summary
                 }
                 return res.status(200).send({
                     data:data,
@@ -133,6 +139,7 @@ app.route('/api/wikipedia/page')
                 error:"query of null"
             })
         } catch (error) {
+            console.log(error)
             res.status(403).send({
                 error:error
             })
